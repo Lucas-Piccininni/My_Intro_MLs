@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^4.8.0"
+  },
+  "name": "MyFirstTFjs",
+  "version": "1.0.0",
+  "description": "Experimenting with html and js ML scripts",
+  "main": "index.js",
+  "repository": "https://github.com/Lucas-Piccininni/My_Intro_MLs.git",
+  "author": "Lucas Piccininni",
+  "license": "MIT"
+}
