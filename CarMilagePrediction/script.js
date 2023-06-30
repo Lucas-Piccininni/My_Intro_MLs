@@ -55,7 +55,7 @@ async function run() {
 
   await trainModel(model2, inputs, labels, 75, 'Model 2');
 
-  await trainModel(model3, inputs, labels, 100, 'Model 3');
+  await trainModel(model3, inputs, labels, 200, 'Model 3');
   console.log("Done Training");
 
   // Make some predictions using the model and compare them to the
