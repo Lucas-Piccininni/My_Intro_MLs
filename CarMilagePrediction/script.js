@@ -37,20 +37,34 @@ async function run() {
 
   // More code will be added below
   // Create the model
-  const model = createModel();
-  tfvis.show.modelSummary({ name: "Model Summary" }, model);
+  const model1 = createModel();
+  tfvis.show.modelSummary({ name: "Model 1 Summary" }, model1);
+
+  const model2 = createModel();
+  tfvis.show.modelSummary({ name: "Model 2 Summary" }, model2);
+
+  const model3 = createModel2();
+  tfvis.show.modelSummary({ name: "Model 3 Summary" }, model3);
 
   // Convert the data to a form we can use for training.
   const tensorData = convertToTensor(data);
   const { inputs, labels } = tensorData;
 
   // Train the model
-  await trainModel(model, inputs, labels);
+  await trainModel(model1, inputs, labels, 50, 'Model 1');
+
+  await trainModel(model2, inputs, labels, 75, 'Model 2');
+
+  await trainModel(model3, inputs, labels, 100, 'Model 3');
   console.log("Done Training");
 
   // Make some predictions using the model and compare them to the
   // original data
-  testModel(model, data, tensorData);
+  testModel(model1, data, tensorData, 'Model 1');
+
+  testModel(model2, data, tensorData, 'Model 2');
+
+  testModel(model3, data, tensorData, 'Model 3');
 }
 
 document.addEventListener("DOMContentLoaded", run);
@@ -60,7 +74,22 @@ function createModel() {
   const model = tf.sequential();
 
   // Add a single input layer
-  model.add(tf.layers.dense({ inputShape: [1], units: 1, useBias: true }));
+  model.add(tf.layers.dense({ inputShape: [1], units: 20, useBias: true }));
+
+  // Add an output layer
+  model.add(tf.layers.dense({ units: 1, useBias: true }));
+
+  return model;
+}
+
+function createModel2() {
+  // Create a sequential model
+  const model = tf.sequential();
+
+  // Add a single input layer
+  model.add(tf.layers.dense({ inputShape: [1], units: 50, useBias: true}));
+
+  model.add(tf.layers.dense({units: 10, activation: 'relu'}))
 
   // Add an output layer
   model.add(tf.layers.dense({ units: 1, useBias: true }));
@@ -114,7 +143,7 @@ function convertToTensor(data) {
   });
 }
 
-async function trainModel(model, inputs, labels) {
+async function trainModel(model, inputs, labels, eps, ModName) {
   // Prepare the model for training.
   model.compile({
     optimizer: tf.train.adam(),
@@ -123,21 +152,21 @@ async function trainModel(model, inputs, labels) {
   });
 
   const batchSize = 32;
-  const epochs = 50;
+  const epochs = eps;
 
   return await model.fit(inputs, labels, {
     batchSize,
     epochs,
     shuffle: true,
     callbacks: tfvis.show.fitCallbacks(
-      { name: "Training Performance" },
+      { name: "Training Performance for " + ModName},
       ["loss", "mse"],
       { height: 200, callbacks: ["onEpochEnd"] }
     ),
   });
 }
 
-function testModel(model, inputData, normalizationData) {
+function testModel(model, inputData, normalizationData, ModName = 'Prediction Data') {
   const { inputMax, inputMin, labelMin, labelMax } = normalizationData;
 
   // Generate predictions for a uniform range of numbers between 0 and 1;
@@ -165,7 +194,7 @@ function testModel(model, inputData, normalizationData) {
   }));
 
   tfvis.render.scatterplot(
-    { name: "Model Predictions vs Original Data" },
+    { name: ModName + " vs Original Data" },
     {
       values: [originalPoints, predictedPoints],
       series: ["original", "predicted"],
