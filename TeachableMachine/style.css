@@ -24,9 +24,8 @@ body {
 
 h1 {
   font-style: italic;
-  color: #FF6F00;
+  color: #ff6f00;
 }
-
 
 video {
   clear: both;
@@ -48,5 +47,5 @@ button {
 }
 
 #status {
-  font-size:150%;
+  font-size: 150%;
 }
