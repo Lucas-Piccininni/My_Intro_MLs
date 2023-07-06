@@ -25,3 +25,35 @@ const MOBILE_NET_INPUT_HEIGHT = 224;
 const STOP_DATA_GATHER = -1;
 const CLASS_NAMES = [];
 status.innerText = 'Loaded TensorFlow.js - version: ' + tf.version.tfjs;
+
+ENABLE_CAM_BUTTON.addEventListener('click', enableCam);
+TRAIN_BUTTON.addEventListener('click', trainAndPredict);
+RESET_BUTTON.addEventListener('click', reset);
+
+
+function enableCam() {
+  // TODO: Fill this out later in the codelab!
+}
+
+
+function trainAndPredict() {
+  // TODO: Fill this out later in the codelab!
+}
+
+
+function reset() {
+  // TODO: Fill this out later in the codelab!
+}
+
+let dataCollectorButtons = document.querySelectorAll('button.dataCollector');
+for (let i = 0; i < dataCollectorButtons.length; i++) {
+  dataCollectorButtons[i].addEventListener('mousedown', gatherDataForClass);
+  dataCollectorButtons[i].addEventListener('mouseup', gatherDataForClass);
+  // Populate the human readable names for classes.
+  CLASS_NAMES.push(dataCollectorButtons[i].getAttribute('data-name'));
+}
+
+
+function gatherDataForClass() {
+  // TODO: Fill this out later in the codelab!
+}
