@@ -83,10 +83,41 @@ for (let i = 0; i < dataCollectorButtons.length; i++) {
   CLASS_NAMES.push(dataCollectorButtons[i].getAttribute("data-name"));
 }
 
+/**
+ * Handle Data Gather for button mouseup/mousedown.
+ **/
 function gatherDataForClass() {
-  // TODO: Fill this out later in the codelab!
+  let classNumber = parseInt(this.getAttribute('data-1hot'));
+  gatherDataState = (gatherDataState === STOP_DATA_GATHER) ? classNumber : STOP_DATA_GATHER;
+  dataGatherLoop();
 }
 
+function dataGatherLoop() {
+  if (videoPlaying && gatherDataState !== STOP_DATA_GATHER) {
+    let imageFeatures = tf.tidy(function() {
+      let videoFrameAsTensor = tf.browser.fromPixels(VIDEO);
+      let resizedTensorFrame = tf.image.resizeBilinear(videoFrameAsTensor, [MOBILE_NET_INPUT_HEIGHT, 
+          MOBILE_NET_INPUT_WIDTH], true);
+      let normalizedTensorFrame = resizedTensorFrame.div(255);
+      return mobilenet.predict(normalizedTensorFrame.expandDims()).squeeze();
+    });
+
+    trainingDataInputs.push(imageFeatures);
+    trainingDataOutputs.push(gatherDataState);
+    
+    // Intialize array index element if currently undefined.
+    if (examplesCount[gatherDataState] === undefined) {
+      examplesCount[gatherDataState] = 0;
+    }
+    examplesCount[gatherDataState]++;
+
+    STATUS.innerText = '';
+    for (let n = 0; n < CLASS_NAMES.length; n++) {
+      STATUS.innerText += CLASS_NAMES[n] + ' data count: ' + examplesCount[n] + '. ';
+    }
+    window.requestAnimationFrame(dataGatherLoop);
+  }
+}
 /**
  * Loads the MobileNet model and warms it up so ready for use.
  **/
